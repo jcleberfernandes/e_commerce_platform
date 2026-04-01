@@ -1,7 +1,9 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.search import SearchVectorField, SearchVector
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class StockChange(models.Model):
@@ -63,6 +65,9 @@ class Product(models.Model):
     description = models.TextField()
     product_type = models.CharField(max_length=20, choices=ProductType.choices)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    seller = models.ForeignKey(
+        "auth.User", on_delete=models.CASCADE, related_name="products"
+    )
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to="products/", blank=True, null=True)
     search_vector = SearchVectorField(null=True, blank=True)
@@ -98,3 +103,11 @@ class ProductVariant(models.Model):
                 raise ValidationError(
                     "Digital products must have exactly one variant with stock=0."
                 )
+
+
+@receiver(post_save, sender=Product)
+def update_search_vector(sender, instance, **kwargs):
+    Product.objects.filter(pk=instance.pk).update(
+        search_vector=SearchVector("name", weight="A")
+        + SearchVector("description", weight="B")
+    )
