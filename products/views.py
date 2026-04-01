@@ -153,6 +153,7 @@ def product_create(request):
         base_price=data["base_price"],
         product_type=data.get("product_type", "physical"),
         category=category,
+        seller=request.user,
     )
     return Response(product_to_dict(product), status=status.HTTP_201_CREATED)
 
