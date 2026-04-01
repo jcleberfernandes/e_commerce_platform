@@ -65,6 +65,9 @@ class Product(models.Model):
     description = models.TextField()
     product_type = models.CharField(max_length=20, choices=ProductType.choices)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    seller = models.ForeignKey(
+        "auth.User", on_delete=models.CASCADE, related_name="products"
+    )
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to="products/", blank=True, null=True)
     search_vector = SearchVectorField(null=True, blank=True)
