@@ -44,6 +44,12 @@
         <button type="submit">Change Password</button>
     </form>
 
+    {% if role == "seller" %}
+    <hr>
+    <h2>Seller</h2>
+    <a href="{% url 'orders:seller_orders' %}">View My Orders</a>
+    {% endif %}
+
     <hr>
     <a href="{% url 'logout' %}">Logout</a>
 </body>

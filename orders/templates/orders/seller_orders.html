@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Orders</title>
+</head>
+<body>
+    <h1>My Orders</h1>
+
+    {% if forbidden %}
+        <p style="color:red;">Access restricted to sellers only.</p>
+    {% else %}
+    <p>Showing {{ page_obj.paginator.count }} order(s) containing your products.</p>
+
+    {% if page_obj.object_list %}
+        {% for order in page_obj.object_list %}
+        <div style="border:1px solid #ccc; padding:12px; margin-bottom:16px;">
+            <p><b>Order #{{ order.id }}</b> &mdash; {{ order.status }} &mdash; ${{ order.total_amount }}</p>
+            <p><b>Buyer:</b> {{ order.buyer.username }}</p>
+            <p><b>Date:</b> {{ order.created_at|date:"d M Y H:i" }}</p>
+
+            <table border="1" cellpadding="6" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Variant</th>
+                        <th>SKU</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Subtotal</th>
+                        <th>Fulfilment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items.all %}
+                    <tr>
+                        <td>{{ item.variant.product.name }}</td>
+                        <td>{{ item.variant.name }}</td>
+                        <td>{{ item.variant.sku }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ item.unit_price }}</td>
+                        <td>${{ item.subtotal }}</td>
+                        <td>{{ item.fulfilment_status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+
+        <div>
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Next</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>No orders found for your products.</p>
+    {% endif %}
+    {% endif %}
+
+    <hr>
+    <a href="{% url 'profile' %}">Back to Profile</a>
+</body>
+</html>
