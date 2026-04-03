@@ -1,0 +1,6 @@
+from .register import register_view
+from .login import login_view
+from .logout import logout_view
+
+from .profile import profile_view
+from .seller_profile import seller_profile_view

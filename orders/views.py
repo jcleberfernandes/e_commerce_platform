@@ -1,4 +1,6 @@
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -174,14 +176,10 @@ def cancel_order_view(request, pk):
         return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@login_required
 def seller_orders_view(request):
     if not is_seller(request.user):
-        return Response(
-            {"detail": "Apenas sellers podem visualizar pedidos."},
-            status=status.HTTP_403_FORBIDDEN,
-        )
+        return render(request, "orders/seller_orders.html", {"page_obj": None, "forbidden": True})
 
     orders = get_seller_orders(request.user)
 
@@ -189,15 +187,7 @@ def seller_orders_view(request):
     page = request.GET.get("page", 1)
     page_obj = paginator.get_page(page)
 
-    results = [order_to_dict(o) for o in page_obj]
-    return Response(
-        {
-            "count": paginator.count,
-            "pages": paginator.num_pages,
-            "page": page_obj.number,
-            "results": results,
-        }
-    )
+    return render(request, "orders/seller_orders.html", {"page_obj": page_obj})
 
 
 @api_view(["POST"])

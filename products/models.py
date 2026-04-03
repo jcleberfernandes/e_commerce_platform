@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+from django.conf import settings
+=======
+>>>>>>> main
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.indexes import GinIndex
@@ -64,9 +68,13 @@ class Product(models.Model):
     slug = models.SlugField(unique=True)
     description = models.TextField()
     product_type = models.CharField(max_length=20, choices=ProductType.choices)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="products")
     seller = models.ForeignKey(
-        "auth.User", on_delete=models.CASCADE, related_name="products"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="products",
+        null=True,
+        blank=True,
     )
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to="products/", blank=True, null=True)

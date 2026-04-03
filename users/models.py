@@ -13,6 +13,7 @@ class Profile(models.Model):
 
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.BUYER)
+    bio = models.TextField(blank=True, default="")
 
     def __str__(self):
         return f"{self.user.id} - {self.user.username} ({self.role})"
