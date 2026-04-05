@@ -325,13 +325,44 @@ curl -b seller-cookies.txt \
 
 ---
 
+## Project Structure
+
+```
+e_commerce_platform/
+├── core/                  # Base templates, home page, seed command
+│   ├── templates/core/
+│   └── management/commands/seed.py
+├── users/                 # Registration, login, profiles, seller public page
+├── products/              # Product & category models, stock service, API views
+├── cart/                  # Cart model, session cart, HTML + API views
+├── orders/                # Order model, checkout service, seller dashboard
+├── e_comerce_platform/    # Django settings and root URL conf
+├── Makefile               # Developer automation (setup, run, test, reset)
+└── manage.py
+```
+
+Each app follows the same internal layout: `models.py`, `views.py`, `urls.py`, `services.py`, `admin.py`, `tests.py`. Business logic lives exclusively in `services.py` — views only handle HTTP.
+
+---
+
+## Known Limitations
+
+This is a demonstration project. The following are intentional simplifications:
+
+- **Payment is mocked** — checkout immediately creates a confirmed order with no real payment gateway
+- **No email notifications** — order confirmations are shown on-screen only
+- **SQLite only** — sufficient for local development; a production deployment would use PostgreSQL
+- **No image uploads via API** — product images can only be set through the Django admin
+
+---
+
 ## Running Tests
 
 ```bash
 make test
 ```
 
-Tests cover user registration and roles, product creation and stock changes, cart operations, order lifecycle and status transitions, and seller-specific views.
+Tests cover seller/buyer role enforcement, seller order visibility (sellers only see orders containing their own products), seller profile views, and unauthenticated access redirects.
 
 ---
 

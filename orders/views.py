@@ -198,7 +198,7 @@ def checkout_html_view(request):
 @login_required
 def seller_orders_view(request):
     if not is_seller(request.user):
-        return render(request, "orders/seller_orders.html", {"page_obj": None, "forbidden": True})
+        return render(request, "orders/seller_orders.html", {"page_obj": None, "forbidden": True}, status=403)
 
     orders = get_seller_orders(request.user)
 
